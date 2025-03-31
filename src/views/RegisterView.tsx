@@ -14,6 +14,8 @@ const RegisterView = () => {
         password_confirmation: ''
     }
 
+// ACCESO
+
     const { register, watch, handleSubmit, formState: { errors } } = useForm<RegisterForm>({ defaultValues: initialValues })
 
     const password = watch('password')
