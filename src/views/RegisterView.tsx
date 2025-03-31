@@ -20,7 +20,6 @@ const RegisterView = () => {
 
     const handleRegister = async (formData: RegisterForm) => {
 
-        // const url = 'http://localhost:4000/auth/register'
         const url = `${import.meta.env.VITE_API_URL}/auth/register`
 
         try {
