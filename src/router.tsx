@@ -5,6 +5,8 @@ import AuthLayout from './layouts/AuthLayout'
 
 export default function Router() {
 
+    // COMENZANDO FROTEND
+
     return (
         <BrowserRouter>
             <Routes>
