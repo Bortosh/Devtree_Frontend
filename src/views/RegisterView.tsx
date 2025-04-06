@@ -1,7 +1,9 @@
+import { toast } from 'sonner'
 import { Link } from "react-router-dom";
 import { useForm } from 'react-hook-form'
-import axios, { isAxiosError } from "axios";
+import { isAxiosError } from "axios";
 import ErrorMessage from "../components/ErrorMessage";
+import api from '../config/axios';
 import { RegisterForm } from "../types";
 
 const RegisterView = () => {
@@ -14,23 +16,23 @@ const RegisterView = () => {
         password_confirmation: ''
     }
 
-    const { register, watch, handleSubmit, formState: { errors } } = useForm<RegisterForm>({ defaultValues: initialValues })
+    const { register, watch, reset, handleSubmit, formState: { errors } } = useForm<RegisterForm>({ defaultValues: initialValues })
 
     const password = watch('password')
-
+    
     const handleRegister = async (formData: RegisterForm) => {
-
-        const url = `${import.meta.env.VITE_API_URL}/auth/register`
+        
+        const url = `${import.meta.env.VITE_REGISTRAR_USUARIO}`
 
         try {
-            const { data } = await axios.post(url, formData)
-
-            console.log("🚀 ~ handleRegister ~ response:", data)
-
+            const { data } = await api.post(url, formData)
+            toast.success(data)
+            reset()
+            
         } catch (error) {
-
+            
             if (isAxiosError(error) && error.response) {
-                console.log(error.response?.data.error)
+                toast.error(error.response.data.error)
             }
 
         }
@@ -41,7 +43,7 @@ const RegisterView = () => {
             <h1 className="text-4xl text-white font-bold">Crear Cuenta</h1>
 
             <form
-                onSubmit={handleSubmit(handleRegister)}
+                onSubmit={ handleSubmit(handleRegister) }
                 className="bg-white px-5 py-20 rounded-lg space-y-10 mt-10"
             >
                 <div className="grid grid-cols-1 space-y-3">
