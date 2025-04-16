@@ -1,4 +1,4 @@
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import ErrorMessage from "../components/ErrorMessage";
 import { LoginForm } from "../types";
@@ -13,6 +13,8 @@ const LoginView = () => {
         password: ''
     }
 
+    const navigate = useNavigate()
+
     const { register, reset, handleSubmit, formState: { errors } } = useForm({ defaultValues: initialValues })
 
     const handleLogin = async (formData: LoginForm) => {
@@ -24,8 +26,9 @@ const LoginView = () => {
 
             localStorage.setItem('AUTH_TOKEN', data)
 
-            toast.success(data)
+            toast.success('Proceso exitoso')
             reset()
+            navigate('/admin', { replace: true })
 
         } catch (error) {
 
