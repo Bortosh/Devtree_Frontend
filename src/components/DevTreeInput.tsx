@@ -17,7 +17,6 @@ const DevTreeInput = ({ item, handleUrlChange, handleEnableLink }: DevTreeInputP
                 className="w-12 h-12 bg-cover"
                 style={{ backgroundImage: `url('/social/icon_${item.name}.svg')` }}
             >
-
             </div>
             <input type="text" className="flex-1 border border-gray-900 rounded-lg" value={item.url} onChange={handleUrlChange} name={item.name} />
 

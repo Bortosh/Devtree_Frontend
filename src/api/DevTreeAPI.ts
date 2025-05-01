@@ -14,7 +14,7 @@ export const getUser = async () => {
     }
 }
 
-export const updateProfile = async (formData: ProfileForm) => {
+export const updateProfile = async (formData: User) => {
     const url = import.meta.env.VITE_UPDATE_USUARIO
 
     try {
