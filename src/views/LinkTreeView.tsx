@@ -29,7 +29,7 @@ const LinkTreeView = () => {
     useEffect(() => {
 
         const updateData = devTreeLinks.map(item => {
-            const userLink = JSON.parse(user.links).find((link : SocialNetwork) => link.name === item.name)
+            const userLink = JSON.parse(user.links).find((link: SocialNetwork) => link.name === item.name)
             if (userLink) {
                 return { ...item, url: userLink.url, enabled: userLink.enabled }
             }
@@ -48,14 +48,9 @@ const LinkTreeView = () => {
 
         setDevTreeLinks(updateLinks)
 
-        queryClient.setQueryData(['user'], (prevUser: User) => {
-            return {
-                ...prevUser,
-                links: JSON.stringify(updateLinks)
-            }
-        })
-
     }
+
+    const links: SocialNetwork[] = JSON.parse(user.links)
 
     const handleEnableLink = (socialNetwork: string) => {
         const updateLinks = devTreeLinks.map(item => {
@@ -68,12 +63,67 @@ const LinkTreeView = () => {
             }
             return item
         })
+
+        let updatedItems: SocialNetwork[] = []
+
+        const selectedSocialNetwork = updateLinks.find(item => item.name === socialNetwork)
+
+        if (selectedSocialNetwork?.enabled) {
+
+            const id = links.filter(item => item.id).length + 1
+
+            if (links.some(item => item.name === socialNetwork)) {
+
+                updatedItems = links.map(item => {
+                    if (item.name === socialNetwork) {
+                        return {
+                            ...item,
+                            id,
+                            enabled: true
+                        }
+                    } else {
+                        return item
+                    }
+                })
+
+            } else {
+                const newItem = {
+                    ...selectedSocialNetwork,
+                    id
+                }
+                updatedItems = [...links, newItem]
+            }
+
+        } else {
+
+            const indexToUpdate = links.findIndex((item) => item.name === socialNetwork)
+
+            updatedItems = links.map(item => {
+                if (item.name === socialNetwork) {
+                    return {
+                        ...item,
+                        id: 0,
+                        enabled: false
+                    }
+                } else if (item.id > links[indexToUpdate].id) {
+                    return {
+                        ...item,
+                        id: item.id - 1
+                    }
+                } else {
+                    return item
+                }
+            })
+
+        }
+
         setDevTreeLinks(updateLinks)
 
+        // ALMACENAR EN BASE DE DATOS
         queryClient.setQueryData(['user'], (prevUser: User) => {
             return {
                 ...prevUser,
-                links: JSON.stringify(updateLinks)
+                links: JSON.stringify(updatedItems)
             }
         })
     }
@@ -88,7 +138,7 @@ const LinkTreeView = () => {
                 }
                 <button
                     className="bg-cyan-400 p-2 text-lg w-full uppercase text-slate-600 rounded-lg font-bold"
-                    onClick={() => mutate(user)}
+                    onClick={() => mutate(queryClient.getQueryData(['user'])!)}
                 >
                     Guardar Cambios
                 </button>
