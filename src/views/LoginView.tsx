@@ -5,8 +5,11 @@ import { LoginForm } from "../types";
 import api from "../config/axios";
 import { toast } from "sonner";
 import { isAxiosError } from "axios";
+import { useMutation } from "@tanstack/react-query";
+import { handleLogin } from "../api/DevTreeAPI";
 
 const LoginView = () => {
+
 
     const initialValues: LoginForm = {
         email: '',
@@ -17,36 +20,51 @@ const LoginView = () => {
 
     const { register, reset, handleSubmit, formState: { errors } } = useForm({ defaultValues: initialValues })
 
-    const handleLogin = async (formData: LoginForm) => {
+    // const handleLogin = async (formData: LoginForm) => {
 
-        const url = import.meta.env.VITE_LOGIN_USUARIO
+    //     const url = import.meta.env.VITE_LOGIN_USUARIO
 
-        try {
-            const { data } = await api.post(url, formData)
+    //     try {
+    //         const { data } = await api.post(url, formData)
 
+    //         localStorage.setItem('AUTH_TOKEN', data)
+
+    //         toast.success('Proceso exitoso')
+    //         reset()
+    //         navigate('/admin', { replace: true })
+
+    //     } catch (error) {
+
+    //         if (isAxiosError(error) && error.response) {
+    //             toast.error(error.response.data.error)
+    //         }
+
+    //     }
+    // }
+
+    const loginMutation = useMutation({
+        mutationFn: handleLogin,
+        onError: (error) => {
+            toast.error(error.message)
+        },
+        onSuccess: (data:any) => {
             localStorage.setItem('AUTH_TOKEN', data)
-
             toast.success('Proceso exitoso')
             reset()
             navigate('/admin', { replace: true })
-
-        } catch (error) {
-
-            if (isAxiosError(error) && error.response) {
-                toast.error(error.response.data.error)
-            }
-
         }
+    })
 
-
-    }
+const ejecutaMutation = (formData: any) => {
+    loginMutation.mutate(formData)
+}
 
     return (
         <>
             <h1 className="text-4xl text-white font-bold">Iniciar Sesión</h1>
 
             <form
-                onSubmit={handleSubmit(handleLogin)}
+                onSubmit={handleSubmit(ejecutaMutation)}
                 className="bg-white px-5 py-20 rounded-lg space-y-10 mt-10"
                 noValidate
             >
