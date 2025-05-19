@@ -1,39 +1,65 @@
-import { Link } from "react-router-dom";
+import { toast } from 'sonner'
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useForm } from 'react-hook-form'
-import axios, { isAxiosError } from "axios";
+import { isAxiosError } from "axios";
 import ErrorMessage from "../components/ErrorMessage";
+import api from '../config/axios';
 import { RegisterForm } from "../types";
+import { useMutation } from '@tanstack/react-query';
+import { handleRegister } from '../api/DevTreeAPI';
 
 const RegisterView = () => {
+
+    const navigate = useNavigate()
+
+    const { state } = useLocation()
+
+    const handle = state?.handle
 
     const initialValues: RegisterForm = {
         name: '',
         email: '',
-        handle: '',
+        handle: handle || '',
         password: '',
         password_confirmation: ''
     }
 
-    const { register, watch, handleSubmit, formState: { errors } } = useForm<RegisterForm>({ defaultValues: initialValues })
+    const { register, watch, reset, handleSubmit, formState: { errors } } = useForm<RegisterForm>({ defaultValues: initialValues })
 
     const password = watch('password')
 
-    const handleRegister = async (formData: RegisterForm) => {
+    // const handleRegister = async (formData: RegisterForm) => {
 
-        const url = `${import.meta.env.VITE_API_URL}/auth/register`
+    //     const url = `${import.meta.env.VITE_REGISTRAR_USUARIO}`
 
-        try {
-            const { data } = await axios.post(url, formData)
+    //     try {
+    //         const { data } = await api.post(url, formData)
+    //         toast.success(data)
+    //         reset()
+    //         navigate('/auth/login', { replace: true })
+    //     } catch (error) {
 
-            console.log("🚀 ~ handleRegister ~ response:", data)
+    //         if (isAxiosError(error) && error.response) {
+    //             toast.error(error.response.data.error)
+    //         }
 
-        } catch (error) {
+    //     }
+    // }
 
-            if (isAxiosError(error) && error.response) {
-                console.log(error.response?.data.error)
-            }
-
+    const registerMutation = useMutation({
+        mutationFn: handleRegister,
+        onError: (error) => {
+            toast.error(error.message)
+        },
+        onSuccess: (data: any) => {
+            toast.success(data)
+            reset()
+            navigate('/auth/login', { replace: true })
         }
+    })
+
+    const ejecutaMutation = (formData: any) => {
+        registerMutation.mutate(formData)
     }
 
     return (
@@ -41,7 +67,7 @@ const RegisterView = () => {
             <h1 className="text-4xl text-white font-bold">Crear Cuenta</h1>
 
             <form
-                onSubmit={handleSubmit(handleRegister)}
+                onSubmit={handleSubmit(ejecutaMutation)}
                 className="bg-white px-5 py-20 rounded-lg space-y-10 mt-10"
             >
                 <div className="grid grid-cols-1 space-y-3">
