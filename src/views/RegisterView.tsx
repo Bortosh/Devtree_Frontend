@@ -1,9 +1,7 @@
 import { toast } from 'sonner'
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useForm } from 'react-hook-form'
-import { isAxiosError } from "axios";
 import ErrorMessage from "../components/ErrorMessage";
-import api from '../config/axios';
 import { RegisterForm } from "../types";
 import { useMutation } from '@tanstack/react-query';
 import { handleRegister } from '../api/DevTreeAPI';
