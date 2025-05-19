@@ -2,9 +2,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import ErrorMessage from "../components/ErrorMessage";
 import { LoginForm } from "../types";
-import api from "../config/axios";
 import { toast } from "sonner";
-import { isAxiosError } from "axios";
 import { useMutation } from "@tanstack/react-query";
 import { handleLogin } from "../api/DevTreeAPI";
 
